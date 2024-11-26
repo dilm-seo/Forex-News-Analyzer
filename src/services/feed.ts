@@ -1,6 +1,6 @@
 import { NewsItem } from '../types';
 
-const FEED_URL = 'https://www.forexlive.com/feed/news/';
+const FEED_URL = 'https://www.forexlive.com/feed/';
 
 export class FeedService {
   private static parseXML(xmlText: string): NewsItem[] {
