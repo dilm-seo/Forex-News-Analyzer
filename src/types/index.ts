@@ -17,3 +17,20 @@ export interface AnalysisResult {
   analysis: string;
   timestamp: string;
 }
+
+export type MessageType = 'user' | 'assistant' | 'error';
+
+export interface Message {
+  id: string;
+  content: string;
+  type: MessageType;
+  timestamp: string;
+}
+
+export interface TradingSignal {
+  pair: string;
+  direction: 'buy' | 'sell';
+  impact: number;
+  reasons: string[];
+  timestamp: string;
+}

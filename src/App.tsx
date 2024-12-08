@@ -1,6 +1,7 @@
 import React from 'react';
-import { NewsAnalyzer } from './components/NewsAnalyzer';
+import { ChatBot } from './components/ChatBot';
 import { SettingsPanel } from './components/SettingsPanel';
+import { TradingSignals } from './components/TradingSignals';
 import { Newspaper } from 'lucide-react';
 
 function App() {
@@ -24,8 +25,9 @@ function App() {
             <SettingsPanel />
           </div>
           
-          <div className="lg:col-span-2">
-            <NewsAnalyzer />
+          <div className="lg:col-span-2 space-y-8">
+            <TradingSignals />
+            <ChatBot />
           </div>
         </div>
       </div>

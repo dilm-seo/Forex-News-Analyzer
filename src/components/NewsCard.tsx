@@ -1,19 +1,17 @@
 import React, { useMemo } from 'react';
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
 import { ExternalLink } from 'lucide-react';
 import { AnalysisResult } from '../types';
 import { SentimentChart } from './SentimentChart';
-import { ImpactIndicator } from './ImpactIndicator';
 import { TradingOpportunity } from './TradingOpportunity';
 import { extractSentimentData, extractTradingOpportunity } from '../utils/analysisParser';
+import { Card } from './ui/card';
 
 interface NewsCardProps {
   result: AnalysisResult;
 }
 
 export function NewsCard({ result }: NewsCardProps) {
-  const { sentiment, impact } = useMemo(() => 
+  const { sentiment, impact, score } = useMemo(() => 
     extractSentimentData(result.analysis),
     [result.analysis]
   );
@@ -24,47 +22,48 @@ export function NewsCard({ result }: NewsCardProps) {
   );
 
   return (
-    <div className="card p-6 space-y-6">
-      <div className="flex justify-between items-start gap-4">
-        <div>
-          <h3 className="text-lg font-semibold text-gray-900">{result.newsItem.title}</h3>
-          <p className="text-sm text-gray-500 mt-1">
-            {new Date(result.newsItem.pubDate).toLocaleString('fr-FR', {
-              dateStyle: 'long',
-              timeStyle: 'short'
-            })}
-          </p>
-        </div>
-        <ImpactIndicator impact={impact} />
-      </div>
-
-      {tradingOpp && <TradingOpportunity {...tradingOpp} />}
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="bg-gray-50 rounded-xl p-4">
-          <h4 className="text-md font-semibold mb-4 text-gray-700">Sentiment du Marché</h4>
-          <SentimentChart data={sentiment} />
-        </div>
-        
-        <div className="bg-gray-50 rounded-xl p-4">
-          <h4 className="text-md font-semibold mb-3 text-gray-700">Points Clés</h4>
-          <div className="prose prose-sm max-w-none">
-            <ReactMarkdown remarkPlugins={[remarkGfm]}>
-              {result.analysis}
-            </ReactMarkdown>
+    <Card.Root>
+      <Card.Header>
+        <div className="flex justify-between items-start gap-4">
+          <div>
+            <Card.Title>{result.newsItem.title}</Card.Title>
+            <p className="text-sm text-gray-500 mt-1">
+              {new Date(result.newsItem.pubDate).toLocaleString('fr-FR', {
+                dateStyle: 'long',
+                timeStyle: 'short'
+              })}
+            </p>
+          </div>
+          <div className={`px-3 py-1 rounded-full text-sm font-medium ${
+            score >= 7 ? 'bg-red-100 text-red-800' :
+            score >= 4 ? 'bg-yellow-100 text-yellow-800' :
+            'bg-green-100 text-green-800'
+          }`}>
+            Impact: {score}/10
           </div>
         </div>
-      </div>
+      </Card.Header>
 
-      <a
-        href={result.newsItem.link}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 transition-colors text-sm font-medium"
-      >
-        Lire l'article original
-        <ExternalLink className="w-4 h-4" />
-      </a>
-    </div>
+      <Card.Content>
+        {tradingOpp && <TradingOpportunity {...tradingOpp} />}
+
+        <div className="mt-6 bg-gray-50 rounded-xl p-4">
+          <h4 className="text-md font-semibold mb-4 text-gray-700">Force du Signal</h4>
+          <SentimentChart data={sentiment} />
+        </div>
+      </Card.Content>
+
+      <Card.Footer>
+        <a
+          href={result.newsItem.link}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 transition-colors text-sm font-medium"
+        >
+          Article original
+          <ExternalLink className="w-4 h-4" />
+        </a>
+      </Card.Footer>
+    </Card.Root>
   );
 }
